@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from .models import Post
 from .forms import PostForm
@@ -25,9 +25,26 @@ def post_detail(request, pk):
 
 
 def post_new(request):
-    form = PostForm()
-    return render(request, 'blog/post_edit.html', {'form': form})
 
+    if method == "POST":
+        #if the method is POST, we want to construct an instance of PostForm 
+        #using the data entered by the user, which is stored in request.POST:
+        form = PostForm(request.POST)
+        
+        #Next, we must use the method is_valid() on this object we have constructed
+        #to check the form input is correct:
+        if form.is_valid():
+            post = form.save(commit=False) #commit=False means we aren't yet finished (not ready to preserve changes)
+            post.author = request.user
+            post.date_published =  timezone.now
+            post.save() #this will preserve changes i.e. create the new instance of a complete post. 
 
+            #now we want to redirect to the post_detail page to view our post, 
+            #so pass the post_detail view and the pk for this post into the redirect() function:
+            return redirect('post_detail', pk=post.pk) 
+            #NB: redirect() takes the value of the view function and anythin to be pass to it,
+            #whereas render() (see below) takes the urlpattern - i.e. a HTTPrequest, url path, and any input model.
 
-#            <!--<a href="{% url 'post_new' %}" class="top-menu"><span class="glyphicon glyphicon-plus"></span></a>-->
+    else:
+        form = PostForm()
+        return render(request, 'blog/post_edit.html', {'form': form})
