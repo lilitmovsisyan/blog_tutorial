@@ -3,9 +3,13 @@
 {% block content %}
 
     <div class="post">
-        <p>
-            enter post here
-        </p>
+        {% if post.date_published %}
+            <div class="date">
+                {{ post.date_published }}
+            </div>
+        {% endif %}
+        <h1>{{ post.title }}</h1>
+        <p>{{ post.text|linebreaksbr }}</p>
     </div>
 
 {% endblock %}
