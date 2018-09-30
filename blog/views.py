@@ -26,8 +26,8 @@ def post_detail(request, pk):
 
 def post_new(request):
 
-    if method == "POST":
-        #if the method is POST, we want to construct an instance of PostForm 
+    if request.method == "POST":
+        #if the method used by the request is POST, we want to construct an instance of PostForm 
         #using the data entered by the user, which is stored in request.POST:
         form = PostForm(request.POST)
         
@@ -47,4 +47,11 @@ def post_new(request):
 
     else:
         form = PostForm()
-        return render(request, 'blog/post_edit.html', {'form': form})
+    return render(request, 'blog/post_edit.html', {'form': form})
+
+"""
+def post_new(request):
+    form = PostForm()
+    return render(request, 'blog/post_edit.html', {'form': form})
+"""
+
