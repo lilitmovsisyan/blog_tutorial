@@ -34,11 +34,11 @@ def post_new(request):
         #Next, we must use the method is_valid() on this object we have constructed
         #to check the form input is correct:
         if form.is_valid():
-            post = form.save(commit=False) #commit=False means we aren't yet finished (not ready to preserve changes)
+            post = form.save(commit=False) #commit=False means we aren't yet finished (not ready to preserve changes to db)
             post.author = request.user
             post.date_published =  timezone.now
             post.save() 
-            #this will preserve changes i.e. create the new instance of a complete post. 
+            #this will preserve changes i.e. create a database entry.  
 
             #now we want to redirect to the post_detail page to view our post, 
             #so pass the post_detail view and the pk for this post into the redirect() function:
@@ -50,14 +50,9 @@ def post_new(request):
         form = PostForm()
     return render(request, 'blog/post_edit.html', {'form': form})
 
-"""
-def post_new(request):
-    form = PostForm()
-    return render(request, 'blog/post_edit.html', {'form': form})
-"""
 
 def post_edit(request, pk):
-    post = get_object_or_404(request.Post, pk=pk)
+    post = get_object_or_404(Post, pk=pk)
     if request.method == "POST":
         form = PostForm(request.POST, instance=post)
         if form.is_valid():
